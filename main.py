@@ -28,13 +28,36 @@ def main():
     lista_numeros_rssi.pop(0)
     
     for x in lista_numeros_rssi:
-        print(x)
         lista_numeros_rssi_positivos.append(math.trunc(abs(float(x))))
-        
-    for x in lista_numeros_rssi_positivos:
-        print(x)
     
-    a = verificaPrimo(4)
+    p = 0
+    q = 0
+    
+    for x in lista_numeros_rssi_positivos:
+        if verificaPrimo(x):
+            if p==0:
+                p=x
+            elif q==0 and x!=p:
+                q=x
+        if p!=0 and q != 0:
+            break
+    
+    if p==0 or q==0:
+        for x in lista_numeros_rssi_positivos:
+            for y in range (1,x):
+                if verificaPrimo(x-y):
+                    if p==0:
+                        p=x-y
+                    elif q==0 and (x-y)!=p:
+                        q=x-y
+                    break
+                if p!=0 and q != 0:
+                    break
+            if p!=0 and q != 0:
+                break
+    
+    print(p)
+    print(q)
 
 
 def verificaPrimo(numero):
@@ -47,7 +70,6 @@ def verificaPrimo(numero):
         
     return True
         
-    
 
      
         
