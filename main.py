@@ -6,7 +6,7 @@ Created on Thu Feb 17 14:30:24 2022
 """
 import csv
 import math
-
+import hashlib
 
 def main():
     rssi = 2
@@ -58,6 +58,8 @@ def main():
     
     print(p)
     print(q)
+    
+    funcao_hash(oneway_function(p, q))
 
 
 def verificaPrimo(numero):
@@ -70,7 +72,18 @@ def verificaPrimo(numero):
         
     return True
         
+def oneway_function(p,q):
+    n = p * q % 40
+    
+    #polinômio de Euler
+    f = (n*n) - n + 41
+    
+    return f
 
-     
-        
+def funcao_hash(n):
+    hash_object = hashlib.sha256(b'n')
+    hex_dig = hash_object.hexdigest()
+    print(hex_dig)
+    
+    
 main()
