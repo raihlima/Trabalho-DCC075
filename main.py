@@ -9,11 +9,13 @@ import math
 import hashlib
 
 def main():
+    #escolha do rssi
     rssi = 2
     pos_rssi = rssi + 4
     lista_numeros_rssi = []
     lista_numeros_rssi_positivos = []
     
+    #leitura do arquivo
     with open('arquivos/combined_hourly_data.csv', newline='') as file:
         reader = csv.reader(file, delimiter=';', quoting=csv.QUOTE_ALL)
         for row in reader:
@@ -33,6 +35,7 @@ def main():
     p = 0
     q = 0
     
+    #Tenta encontrar um número primo da lista de rssi
     for x in lista_numeros_rssi_positivos:
         if verificaPrimo(x):
             if p==0:
@@ -42,6 +45,7 @@ def main():
         if p!=0 and q != 0:
             break
     
+    #Se não for encontrado um número primo, verifica um próximo da lista
     if p==0 or q==0:
         for x in lista_numeros_rssi_positivos:
             for y in range (1,x):
@@ -59,9 +63,11 @@ def main():
     print(p)
     print(q)
     
-    funcao_hash(oneway_function(p, q))
+    hash_hex = funcao_hash(oneway_function(p, q))
+    valor_binario = converter_hex_binario(hash_hex)
+    
 
-
+#função para verificar se o número é primo
 def verificaPrimo(numero):
     contador = 0
     for x in range (1,numero+1):
@@ -71,7 +77,8 @@ def verificaPrimo(numero):
             return False
         
     return True
-        
+
+#função para o polinomio de euler
 def oneway_function(p,q):
     n = p * q % 40
     
@@ -80,10 +87,27 @@ def oneway_function(p,q):
     
     return f
 
+#função para criar hash
 def funcao_hash(n):
     hash_object = hashlib.sha256(b'n')
     hex_dig = hash_object.hexdigest()
-    print(hex_dig)
+    return hex_dig
     
+def converter_hex_binario(valor):     
+    #Valor inicial
+    #print ("Valor inicial", valor)
+      
+    #Código para converter
+    n = int(valor, 16) 
+    bStr = ''
+    while n > 0:
+        bStr = str(n % 2) + bStr
+        n = n >> 1    
+    resultado = bStr
+    
+    # Imprime o valor em binário
+    #print ("String em binário", str(resultado))
+    
+    return resultado
     
 main()
