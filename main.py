@@ -7,6 +7,7 @@ Created on Thu Feb 17 14:30:24 2022
 import csv
 import math
 import hashlib
+import pandas as pd
 
 def main():
     #escolha do rssi
@@ -17,20 +18,24 @@ def main():
     
     #leitura do arquivo
     with open('arquivos/combined_hourly_data.csv', newline='') as file:
-        reader = csv.reader(file, delimiter=';', quoting=csv.QUOTE_ALL)
+        reader = csv.reader(file, delimiter=';')
         for row in reader:
             lista_numeros_rssi.append(row[pos_rssi])
     
-    with open('arquivos/csv_filtrado.csv', 'w', newline='') as file:
-        writer = csv.writer(file, delimiter=';', quoting=csv.QUOTE_NONE)
+    coluna = lista_numeros_rssi[0]
+    #df = pd.read_csv('arquivos/combined_hourly_data.csv', delimiter=';')
+
+    # with open('arquivos/csv_filtrado.csv', 'w', newline='') as file:
+    #     writer = csv.writer(file, delimiter=';')#, quoting=csv.QUOTE_NONE)
         
-        for x in lista_numeros_rssi:
-            writer.writerow(x)
-    
+    #     for x in lista_numeros_rssi:
+    #         writer.writerow(x)
+  
     lista_numeros_rssi.pop(0)
     
     for x in lista_numeros_rssi:
-        lista_numeros_rssi_positivos.append(math.trunc(abs(float(x))))
+        if x != float('NaN'): 
+            lista_numeros_rssi_positivos.append(math.trunc(abs(float(x))))
     
     p = 0
     q = 0
@@ -42,8 +47,8 @@ def main():
                 p=x
             elif q==0 and x!=p:
                 q=x
-        if p!=0 and q != 0:
-            break
+            if p!=0 and q != 0:
+                break
     
     #Se não for encontrado um número primo, verifica um próximo da lista
     if p==0 or q==0:
@@ -60,11 +65,23 @@ def main():
             if p!=0 and q != 0:
                 break
     
-    print(p)
-    print(q)
+    #print(p)
+    #print(q)
     
-    hash_hex = funcao_hash(oneway_function(p, q))
+    n_euler = oneway_function(p, q)
+    
+    hash_hex = funcao_hash(n_euler)
     valor_binario = converter_hex_binario(hash_hex)
+    
+    lista_numeros_rssi.append('Numero p;' + str(p))
+    lista_numeros_rssi.append('Numero p;' + str(q))
+    lista_numeros_rssi.append('Numero n gerador pelo Polinomio de Euler;' + str(n_euler))
+    lista_numeros_rssi.append('Hash;' + str(hash_hex))
+    lista_numeros_rssi.append('Valor Binario;' + str(valor_binario))
+    
+    lista_numeros_rssi.insert(0, coluna)
+    df = pd.DataFrame(lista_numeros_rssi)
+    df.to_csv('arquivos/csv_filtrado.csv', index = False, header = False)
     
 
 #função para verificar se o número é primo
@@ -89,8 +106,9 @@ def oneway_function(p,q):
 
 #função para criar hash
 def funcao_hash(n):
-    hash_object = hashlib.sha256(b'n')
+    hash_object = hashlib.sha256(str(n).encode('ASCII'))
     hex_dig = hash_object.hexdigest()
+    #print(hex_dig)
     return hex_dig
     
 def converter_hex_binario(valor):     
