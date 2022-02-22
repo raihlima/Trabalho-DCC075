@@ -73,15 +73,20 @@ def main():
     hash_hex = funcao_hash(n_euler)
     valor_binario = converter_hex_binario(hash_hex)
     
-    lista_numeros_rssi.append('Numero p;' + str(p))
-    lista_numeros_rssi.append('Numero p;' + str(q))
-    lista_numeros_rssi.append('Numero n gerador pelo Polinomio de Euler;' + str(n_euler))
-    lista_numeros_rssi.append('Hash;' + str(hash_hex))
-    lista_numeros_rssi.append('Valor Binario;' + str(valor_binario))
-    
     lista_numeros_rssi.insert(0, coluna)
     df = pd.DataFrame(lista_numeros_rssi)
     df.to_csv('arquivos/csv_filtrado.csv', index = False, header = False)
+    
+    resultado = []
+    
+    resultado.append('Numero p: ' + str(p))
+    resultado.append('Numero q: ' + str(q))
+    resultado.append('Numero n gerador pelo Polinomio de Euler: ' + str(n_euler))
+    resultado.append('Hash: ' + str(hash_hex))
+    resultado.append('Valor Binario: ' + str(valor_binario))
+    
+    df = pd.DataFrame(resultado)
+    df.to_csv('arquivos/resultado.txt', index = False, header = False)
     
 
 #função para verificar se o número é primo
